@@ -1,39 +1,47 @@
-AWS Host a WordPress Website Project
+---
+
+# AWS Host a WordPress Website Project
+
 This project demonstrates how to host a highly available, secure, and scalable WordPress website on AWS, leveraging key AWS services. Resources and deployment scripts used in this project are provided in this repository.
 
-Architecture
-The project architecture consists of the following AWS resources:
+## Architecture
 
-VPC Configuration: A custom VPC with public and private subnets distributed across two availability zones to ensure high availability and fault tolerance.
-Internet Gateway: Enables internet access for the instances within the VPC.
-Security Groups: Configured as network firewalls to control inbound and outbound traffic.
-EC2 Instances: Web servers deployed in private subnets for added security, running WordPress with Apache and MySQL.
-Application Load Balancer: Distributes incoming traffic across multiple EC2 instances within an Auto Scaling Group.
-Auto Scaling Group: Ensures elasticity by scaling instances up or down based on traffic and performance needs.
-NAT Gateway: Facilitates internet access for instances within private subnets.
-EC2 Instance Connect Endpoint: Provides secure, browser-based SSH access to EC2 instances.
-Amazon Route 53: Manages DNS records for the registered domain.
-Amazon EFS: Provides a shared file system for WordPress files.
-Amazon RDS: Managed MySQL database for persistent data storage.
-AWS Certificate Manager: Enables secure HTTPS connections.
-SNS Notification: Sends alerts for activity within the Auto Scaling Group.
-Prerequisites
-An AWS account with appropriate permissions.
-Registered domain for DNS and SSL setup.
-IAM role permissions to allow EC2, RDS, EFS, and other services.
-Deployment Instructions
-Step 1: VPC and Subnet Configuration
-Set up a VPC with public and private subnets across two availability zones.
-Attach an Internet Gateway to the VPC.
-Deploy NAT Gateways in the public subnets to allow private subnets outbound internet access.
-Step 2: Security Configuration
-Create Security Groups to control access to the EC2 instances, RDS, and EFS.
-Allow HTTP and HTTPS traffic for public access to the WordPress site and SSH for EC2 instance access.
-Step 3: EC2 Instance Setup
+The project architecture consists of the following AWS resources:
+- **VPC Configuration**: A custom VPC with public and private subnets distributed across two availability zones to ensure high availability and fault tolerance.
+- **Internet Gateway**: Enables internet access for the instances within the VPC.
+- **Security Groups**: Configured as network firewalls to control inbound and outbound traffic.
+- **EC2 Instances**: Web servers deployed in private subnets for added security, running WordPress with Apache and MySQL.
+- **Application Load Balancer**: Distributes incoming traffic across multiple EC2 instances within an Auto Scaling Group.
+- **Auto Scaling Group**: Ensures elasticity by scaling instances up or down based on traffic and performance needs.
+- **NAT Gateway**: Facilitates internet access for instances within private subnets.
+- **EC2 Instance Connect Endpoint**: Provides secure, browser-based SSH access to EC2 instances.
+- **Amazon Route 53**: Manages DNS records for the registered domain.
+- **Amazon EFS**: Provides a shared file system for WordPress files.
+- **Amazon RDS**: Managed MySQL database for persistent data storage.
+- **AWS Certificate Manager**: Enables secure HTTPS connections.
+- **SNS Notification**: Sends alerts for activity within the Auto Scaling Group.
+
+## Prerequisites
+
+- An AWS account with appropriate permissions.
+- Registered domain for DNS and SSL setup.
+- IAM role permissions to allow EC2, RDS, EFS, and other services.
+
+## Deployment Instructions
+
+### Step 1: VPC and Subnet Configuration
+1. Set up a VPC with public and private subnets across two availability zones.
+2. Attach an Internet Gateway to the VPC.
+3. Deploy NAT Gateways in the public subnets to allow private subnets outbound internet access.
+
+### Step 2: Security Configuration
+1. Create Security Groups to control access to the EC2 instances, RDS, and EFS.
+2. Allow HTTP and HTTPS traffic for public access to the WordPress site and SSH for EC2 instance access.
+
+### Step 3: EC2 Instance Setup
 Deploy EC2 instances using the following script to install necessary software, set up the web server, and configure WordPress:
 
-bash
-Copy code
+```bash
 #!/bin/bash
 # Elevate to root
 sudo su
@@ -74,11 +82,12 @@ wget https://wordpress.org/latest.tar.gz
 tar -xzf latest.tar.gz
 sudo cp -r wordpress/* /var/www/html/
 sudo cp /var/www/html/wp-config-sample.php /var/www/html/wp-config.php
-Step 4: Auto Scaling Group Launch Template
+```
+
+### Step 4: Auto Scaling Group Launch Template
 Use the following script for your Auto Scaling Group to ensure all instances are identically configured with Apache, PHP, and MySQL:
 
-bash
-Copy code
+```bash
 #!/bin/bash
 sudo yum update -y
 sudo yum install -y httpd
@@ -96,13 +105,18 @@ mount -a
 # Set permissions and restart Apache
 chown apache:apache -R /var/www/html
 sudo service httpd restart
-Step 5: Load Balancer and Route 53
-Configure the Application Load Balancer to balance traffic across EC2 instances in the Auto Scaling Group.
-Create a Route 53 record to map your domain name to the Load Balancer.
-Step 6: SSL and Monitoring
-Use AWS Certificate Manager to secure your site with HTTPS.
-Configure SNS to send alerts for scaling events.
-Additional Notes
-Database Configuration: Update wp-config.php with your RDS database credentials.
-Permissions: Ensure wp-content is writable for file uploads and plugin installations.
-Monitoring and Logging: Enable CloudWatch for detailed metrics and alerts.
+```
+
+### Step 5: Load Balancer and Route 53
+1. Configure the Application Load Balancer to balance traffic across EC2 instances in the Auto Scaling Group.
+2. Create a Route 53 record to map your domain name to the Load Balancer.
+
+### Step 6: SSL and Monitoring
+1. Use AWS Certificate Manager to secure your site with HTTPS.
+2. Configure SNS to send alerts for scaling events.
+
+## Additional Notes
+
+- **Database Configuration**: Update `wp-config.php` with your RDS database credentials.
+- **Permissions**: Ensure `wp-content` is writable for file uploads and plugin installations.
+- **Monitoring and Logging**: Enable CloudWatch for detailed metrics and alerts.
